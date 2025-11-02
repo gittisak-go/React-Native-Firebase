@@ -32,6 +32,19 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
   };
 
+  const textStyle = {
+    color: isDarkMode ? '#fff' : '#000',
+  };
+
+  const secondaryTextStyle = {
+    color: isDarkMode ? '#ccc' : '#666',
+  };
+
+  const inputStyle = {
+    color: isDarkMode ? '#fff' : '#000',
+    borderColor: isDarkMode ? '#444' : '#ccc',
+  };
+
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(setUser);
     return subscriber;
@@ -98,25 +111,25 @@ function App(): React.JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <View style={styles.content}>
-          <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]}>
+          <Text style={[styles.title, textStyle]}>
             React Native Firebase
           </Text>
 
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>
+            <Text style={[styles.sectionTitle, textStyle]}>
               Authentication Status
             </Text>
-            <Text style={{ color: isDarkMode ? '#ccc' : '#666' }}>
+            <Text style={secondaryTextStyle}>
               {user ? `Signed in as: ${user.email}` : 'Not signed in'}
             </Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>
+            <Text style={[styles.sectionTitle, textStyle]}>
               Firebase Auth Demo
             </Text>
             <TextInput
-              style={[styles.input, { color: isDarkMode ? '#fff' : '#000', borderColor: isDarkMode ? '#444' : '#ccc' }]}
+              style={[styles.input, inputStyle]}
               placeholder="Email"
               placeholderTextColor={isDarkMode ? '#888' : '#999'}
               value={email}
@@ -125,7 +138,7 @@ function App(): React.JSX.Element {
               keyboardType="email-address"
             />
             <TextInput
-              style={[styles.input, { color: isDarkMode ? '#fff' : '#000', borderColor: isDarkMode ? '#444' : '#ccc' }]}
+              style={[styles.input, inputStyle]}
               placeholder="Password"
               placeholderTextColor={isDarkMode ? '#888' : '#999'}
               value={password}
@@ -140,7 +153,7 @@ function App(): React.JSX.Element {
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>
+            <Text style={[styles.sectionTitle, textStyle]}>
               Firestore Demo
             </Text>
             <View style={styles.buttonContainer}>
@@ -149,11 +162,11 @@ function App(): React.JSX.Element {
             </View>
             {firestoreData.length > 0 && (
               <View style={styles.dataContainer}>
-                <Text style={{ color: isDarkMode ? '#ccc' : '#666' }}>
+                <Text style={secondaryTextStyle}>
                   Fetched {firestoreData.length} items:
                 </Text>
                 {firestoreData.map((item, index) => (
-                  <Text key={index} style={{ color: isDarkMode ? '#ccc' : '#666' }}>
+                  <Text key={index} style={secondaryTextStyle}>
                     {item.name || 'N/A'} - {item.email || 'N/A'}
                   </Text>
                 ))}
