@@ -18,15 +18,22 @@ import {
   useColorScheme,
   Alert,
 } from 'react-native';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+
+interface FirestoreUser {
+  id: string;
+  name?: string;
+  email?: string;
+  createdAt?: FirebaseFirestoreTypes.Timestamp;
+}
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [firestoreData, setFirestoreData] = useState<any[]>([]);
+  const [firestoreData, setFirestoreData] = useState<FirestoreUser[]>([]);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
@@ -54,8 +61,9 @@ function App(): React.JSX.Element {
     try {
       await auth().createUserWithEmailAndPassword(email, password);
       Alert.alert('Success', 'User account created!');
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -63,8 +71,9 @@ function App(): React.JSX.Element {
     try {
       await auth().signInWithEmailAndPassword(email, password);
       Alert.alert('Success', 'Signed in successfully!');
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -72,32 +81,42 @@ function App(): React.JSX.Element {
     try {
       await auth().signOut();
       Alert.alert('Success', 'Signed out successfully!');
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      Alert.alert('Error', errorMessage);
     }
   };
 
   const addFirestoreData = async () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter an email address');
+      return;
+    }
     try {
       await firestore().collection('users').add({
-        name: 'Test User',
-        email: email || 'test@example.com',
+        name: 'Demo User',
+        email: email,
         createdAt: firestore.FieldValue.serverTimestamp(),
       });
       Alert.alert('Success', 'Data added to Firestore!');
       fetchFirestoreData();
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      Alert.alert('Error', errorMessage);
     }
   };
 
   const fetchFirestoreData = async () => {
     try {
       const snapshot = await firestore().collection('users').limit(5).get();
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const data = snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      } as FirestoreUser));
       setFirestoreData(data);
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      Alert.alert('Error', errorMessage);
     }
   };
 
